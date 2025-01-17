@@ -19,13 +19,16 @@ func ReadConfig() (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
-	data, err := os.ReadFile(FilePath)
+	data, err := os.Open(FilePath)
 	if err != nil {
 		return Config{}, fmt.Errorf("error finding file: %w", err)
 	}
+	defer data.Close()
 
+	decoder := json.NewDecoder(data)
 	ConfigStruct := Config{}
-	if err := json.Unmarshal(data, &ConfigStruct); err != nil {
+	err = decoder.Decode(&ConfigStruct)
+	if err != nil {
 		return Config{}, err
 	}
 	return ConfigStruct, nil
