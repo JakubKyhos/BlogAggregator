@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"os"
+
+	"database/sql"
 )
 
 func HandlerLogin(s *state, cmd Command) error {
@@ -10,8 +14,18 @@ func HandlerLogin(s *state, cmd Command) error {
 	}
 
 	username := cmd.Args[0]
-	s.Configptr.CurrentUserName = username
-	err := s.Configptr.SetUser(username)
+
+	_, err := s.db.GetUser(context.Background(), username)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Printf("user %s does not exist\n", username)
+			os.Exit(1)
+		}
+		return err
+	}
+
+	s.configptr.CurrentUserName = username
+	err = s.configptr.SetUser(username)
 	if err != nil {
 		return err
 	}

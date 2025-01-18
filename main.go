@@ -1,24 +1,39 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/JakubKyhos/blogaggregator/internal/config"
+	"github.com/JakubKyhos/blogaggregator/internal/database"
+	_ "github.com/lib/pq"
 )
 
 type state struct {
-	Configptr *config.Config
+	db        *database.Queries
+	configptr *config.Config
 }
 
 func main() {
+	dbURL := "postgres://postgres:postgres@localhost:5432/gator"
+
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatalf("error opening database: %v", err)
+	}
+	defer db.Close()
+
+	dbQueries := database.New(db)
+
 	cfg, err := config.ReadConfig()
 	if err != nil {
 		log.Fatalf("error reading config: %v", err)
 	}
 	var s = &state{
-		Configptr: &cfg,
+		db:        dbQueries,
+		configptr: &cfg,
 	}
 
 	commands := Commands{
@@ -26,6 +41,7 @@ func main() {
 	}
 
 	commands.Register("login", HandlerLogin)
+	commands.Register("register", HandlerRegister)
 
 	arguments := os.Args
 	if len(arguments) < 2 {
