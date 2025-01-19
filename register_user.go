@@ -43,6 +43,11 @@ func HandlerRegister(s *state, cmd Command) error {
 	}
 
 	fmt.Printf("user: %s was created\n", username)
-	fmt.Printf("%+v\n", user)
+	printUser(user)
 	return nil
+}
+
+func printUser(user database.User) {
+	fmt.Printf(" * ID:      %v\n", user.ID)
+	fmt.Printf(" * Name:    %v\n", user.Name)
 }
