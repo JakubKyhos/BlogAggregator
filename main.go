@@ -44,6 +44,7 @@ func main() {
 	commands.Register("register", HandlerRegister)
 	commands.Register("reset", HandlerReset)
 	commands.Register("users", HandlerUsersList)
+	commands.Register("agg", handleAggCmd)
 
 	arguments := os.Args
 	if len(arguments) < 2 {
