@@ -7,7 +7,7 @@ import (
 	rssfeed "github.com/JakubKyhos/blogaggregator/internal/rssFeed"
 )
 
-func handleAggCmd(s *state, cmd Command) error {
+func HandlerAggCmd(s *state, cmd Command) error {
 	ctx := context.Background()
 	feedURL := "https://www.wagslane.dev/index.xml"
 

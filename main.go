@@ -44,7 +44,9 @@ func main() {
 	commands.Register("register", HandlerRegister)
 	commands.Register("reset", HandlerReset)
 	commands.Register("users", HandlerUsersList)
-	commands.Register("agg", handleAggCmd)
+	commands.Register("agg", HandlerAggCmd)
+	commands.Register("addfeed", HandlerAddFeed)
+	commands.Register("feeds", HandlerListFeeds)
 
 	arguments := os.Args
 	if len(arguments) < 2 {
