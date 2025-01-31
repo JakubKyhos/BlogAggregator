@@ -8,7 +8,7 @@ import (
 	"database/sql"
 )
 
-func HandlerLogin(s *state, cmd Command) error {
+func handlerLogin(s *state, cmd Command) error {
 	if len(cmd.Args) == 0 {
 		return fmt.Errorf("username required")
 	}

@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func HandlerListFeeds(s *state, cmd Command) error {
+func handlerListFeeds(s *state, cmd Command) error {
 	feed, err := s.db.GetFeeds(context.Background())
 	if err != nil {
 		return fmt.Errorf("couldn't list feeds: %w", err)

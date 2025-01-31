@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func HandlerUsersList(s *state, cmd Command) error {
+func handlerUsersList(s *state, cmd Command) error {
 	users, err := s.db.GetUsers(context.Background())
 	if err != nil {
 		return fmt.Errorf("couldn't list users: %w", err)

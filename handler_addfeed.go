@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlerAddFeed(s *state, cmd Command) error {
+func handlerAddFeed(s *state, cmd Command) error {
 	if len(cmd.Args) < 2 {
 		return fmt.Errorf("both name and url are required")
 	}
@@ -41,19 +41,30 @@ func HandlerAddFeed(s *state, cmd Command) error {
 		return fmt.Errorf("failed to create feed: %s", err)
 	}
 
-	fmt.Println("Feed created successfully:")
-	printFeed(feed, user)
+	var NewFeedFollow = database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+	}
+
+	FeedFollow, err := s.db.CreateFeedFollow(context.Background(), NewFeedFollow)
+	if err != nil {
+		return fmt.Errorf("failed to follow feed: %s", err)
+	}
+
+	fmt.Println("Feed created and followed successfully:")
+	printFeed(feed, user, FeedFollow)
 	fmt.Println()
 	fmt.Println("=====================================")
 
 	return nil
 }
 
-func printFeed(feed database.Feed, user database.User) {
-	fmt.Printf(" * ID:      		%v\n", feed.ID)
-	fmt.Printf(" * CreatedAt:    	%v\n", feed.CreatedAt)
-	fmt.Printf(" * UpdatedAt:    	%v\n", feed.UpdatedAt)
+func printFeed(feed database.Feed, user database.User, feedfollow database.CreateFeedFollowRow) {
 	fmt.Printf(" * Name:    		%v\n", feed.Name)
 	fmt.Printf(" * URL:    			%v\n", feed.Url)
 	fmt.Printf(" * User:    		%v\n", user.Name)
+	fmt.Printf(" * Now following feed: %s as user: %s\n", feedfollow.FeedName, feedfollow.UserName)
 }

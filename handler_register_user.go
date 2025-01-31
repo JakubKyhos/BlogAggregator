@@ -11,7 +11,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func HandlerRegister(s *state, cmd Command) error {
+func handlerRegister(s *state, cmd Command) error {
 	if len(cmd.Args) == 0 {
 		return fmt.Errorf("username required")
 	}
