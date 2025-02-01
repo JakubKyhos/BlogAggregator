@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func follow(s *state, cmd Command) error {
+func handlerfollow(s *state, cmd Command, user database.User) error {
 	if len(cmd.Args) < 1 {
 		return fmt.Errorf("requires url")
 	}
@@ -17,11 +17,6 @@ func follow(s *state, cmd Command) error {
 	feed, err := s.db.GetFeedByURL(context.Background(), cmd.Args[0])
 	if err != nil {
 		return fmt.Errorf("couldn't find the feed: %s", err)
-	}
-
-	user, err := s.db.GetUser(context.Background(), s.configptr.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("couldn't get the user: %s", err)
 	}
 
 	var NewFeedFollow = database.CreateFeedFollowParams{
@@ -46,11 +41,7 @@ func follow(s *state, cmd Command) error {
 	return nil
 }
 
-func following(s *state, cmd Command) error {
-	user, err := s.db.GetUser(context.Background(), s.configptr.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("couldn't get user: %w", err)
-	}
+func handlerfollowing(s *state, cmd Command, user database.User) error {
 	feedfollows, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
 	if err != nil {
 		return fmt.Errorf("couldn't list feeds: %w", err)
@@ -70,5 +61,26 @@ func following(s *state, cmd Command) error {
 
 	fmt.Println("=====================================")
 
+	return nil
+}
+
+func handlerunfollow(s *state, cmd Command, user database.User) error {
+	if len(cmd.Args) < 1 {
+		return fmt.Errorf("requires url")
+	}
+
+	feed, err := s.db.GetFeedByURL(context.Background(), cmd.Args[0])
+	if err != nil {
+		return fmt.Errorf("couldn't find the feed: %s", err)
+	}
+	var unfollowfeed = database.UnfollowFeedParams{
+		Url:  feed.Url,
+		Name: user.Name,
+	}
+	err = s.db.UnfollowFeed(context.Background(), unfollowfeed)
+	if err != nil {
+		return fmt.Errorf("couldn't find the feed: %s", err)
+	}
+	fmt.Printf("%s unfollowed.\n", feed.Name)
 	return nil
 }

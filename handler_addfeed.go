@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"time"
 
@@ -10,22 +9,13 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerAddFeed(s *state, cmd Command) error {
+func handlerAddFeed(s *state, cmd Command, user database.User) error {
 	if len(cmd.Args) < 2 {
 		return fmt.Errorf("both name and url are required")
 	}
 
 	name := cmd.Args[0]
 	url := cmd.Args[1]
-
-	user, err := s.db.GetUser(context.Background(), s.configptr.CurrentUserName)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			fmt.Printf("user %s does not exist\n", s.configptr.CurrentUserName)
-			return err
-		}
-		return err
-	}
 
 	var feedParams = database.CreateFeedParams{
 		ID:        uuid.New(),

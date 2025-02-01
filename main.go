@@ -40,15 +40,16 @@ func main() {
 		Handlers: make(map[string]func(*state, Command) error),
 	}
 
-	commands.Register("login", handlerLogin)
-	commands.Register("register", handlerRegister)
-	commands.Register("reset", handlerReset)
-	commands.Register("users", handlerUsersList)
-	commands.Register("agg", handlerAggCmd)
-	commands.Register("addfeed", handlerAddFeed)
-	commands.Register("feeds", handlerListFeeds)
-	commands.Register("follow", follow)
-	commands.Register("following", following)
+	commands.register("login", handlerLogin)
+	commands.register("register", handlerRegister)
+	commands.register("reset", handlerReset)
+	commands.register("users", handlerUsersList)
+	commands.register("agg", handlerAggCmd)
+	commands.register("addfeed", middlewareLoggedIn(handlerAddFeed))
+	commands.register("feeds", handlerListFeeds)
+	commands.register("follow", middlewareLoggedIn(handlerfollow))
+	commands.register("following", middlewareLoggedIn(handlerfollowing))
+	commands.register("unfollow", middlewareLoggedIn(handlerunfollow))
 
 	arguments := os.Args
 	if len(arguments) < 2 {

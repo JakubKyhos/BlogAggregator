@@ -13,7 +13,7 @@ type Commands struct {
 	Handlers map[string]func(*state, Command) error
 }
 
-func (c *Commands) Register(name string, f func(*state, Command) error) {
+func (c *Commands) register(name string, f func(*state, Command) error) {
 	c.Handlers[name] = f
 }
 
